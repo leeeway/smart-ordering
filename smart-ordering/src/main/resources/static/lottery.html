@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="御膳抽奖 - 唐风雅韵，测测今日运势">
+    <title>御膳抽奖</title>
+    <style>
+        :root {
+            --tang-red: #A61C00;
+            --tang-red-dark: #730100;
+            --tang-gold: #D4AF37;
+            --tang-gold-light: #F2D57E;
+            --tang-black: #1A0909;
+            --tang-ink: #2F1B1B;
+            --tang-ivory: #F8F4E3;
+            --tang-paper: #FFF9EB;
+            --primary-gradient: linear-gradient(135deg, var(--tang-red) 0%, var(--tang-red-dark) 100%);
+            --gold-gradient: linear-gradient(135deg, var(--tang-gold) 0%, var(--tang-gold-light) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "STKaiti", serif;
+            background-color: var(--tang-black);
+            color: var(--tang-ivory);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            background-image: url('tang_bg.png');
+            background-size: 400px;
+            background-repeat: repeat;
+            background-attachment: fixed;
+            padding: 20px;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(26, 9, 9, 0.5) 0%, rgba(26, 9, 9, 0.95) 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .top-accent {
+            height: 4px;
+            background: var(--gold-gradient);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--tang-gold);
+            letter-spacing: 10px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 40px rgba(212, 175, 55, 0.4);
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--tang-gold-light);
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* 轮盘主容器 */
+        .wheel-board {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 10px;
+            background: linear-gradient(145deg, #3a1818 0%, #1a0909 100%);
+            border: 6px solid var(--tang-gold);
+            border-radius: 16px;
+            box-shadow:
+                0 0 50px rgba(212, 175, 55, 0.3),
+                inset 0 0 30px rgba(0, 0, 0, 0.6),
+                0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .wheel-board::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            right: 6px;
+            bottom: 6px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            pointer-events: none;
+        }
+
+        /* 奖品网格布局 - 围成一圈 */
+        .prize-ring {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 6px;
+            aspect-ratio: 1;
+        }
+
+        /* 奖品格子 */
+        .prize-cell {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(47, 27, 27, 0.8);
+            border: 3px solid rgba(100, 60, 60, 0.5);
+            transition: all 0.15s ease;
+            cursor: default;
+        }
+
+        .prize-cell img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.2s;
+        }
+
+        .prize-cell .prize-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 12px 3px 4px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+        }
+
+        /* 高亮/亮灯状态 */
+        .prize-cell.active {
+            border-color: #FFD700;
+            box-shadow:
+                0 0 20px rgba(255, 215, 0, 0.9),
+                0 0 40px rgba(255, 165, 0, 0.6),
+                inset 0 0 15px rgba(255, 215, 0, 0.3);
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .prize-cell.active img {
+            transform: scale(1.08);
+        }
+
+        /* 中奖闪烁 */
+        .prize-cell.winner {
+            animation: winnerBlink 0.4s ease-in-out infinite;
+            z-index: 20;
+        }
+
+        @keyframes winnerBlink {
+
+            0%,
+            100% {
+                border-color: #FFD700;
+                box-shadow:
+                    0 0 25px rgba(255, 215, 0, 0.9),
+                    0 0 50px rgba(255, 165, 0, 0.7);
+            }
+
+            50% {
+                border-color: #FFF8DC;
+                box-shadow:
+                    0 0 40px rgba(255, 255, 200, 1),
+                    0 0 80px rgba(255, 215, 0, 1);
+            }
+        }
+
+        /* 中间区域 - 装饰/按钮区 */
+        .center-area {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: calc(60% - 24px);
+            height: calc(60% - 24px);
+            background: linear-gradient(145deg, #2a1212 0%, #1a0808 100%);
+            border: 4px solid var(--tang-gold);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0 0 30px rgba(0, 0, 0, 0.5),
+                inset 0 0 20px rgba(0, 0, 0, 0.4);
+            z-index: 5;
+        }
+
+        .center-title {
+            color: var(--tang-gold);
+            font-size: 1.6rem;
+            font-weight: bold;
+            letter-spacing: 5px;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+            margin-bottom: 15px;
+        }
+
+        .start-btn {
+            padding: 14px 35px;
+            background: var(--primary-gradient);
+            color: var(--tang-gold);
+            border: 3px solid var(--tang-gold);
+            border-radius: 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow:
+                0 0 20px rgba(166, 28, 0, 0.5),
+                0 5px 15px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.25),
+                    transparent);
+            transition: left 0.5s;
+        }
+
+        .start-btn:hover::before {
+            left: 100%;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 0 35px rgba(166, 28, 0, 0.7),
+                0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .start-btn:active {
+            transform: translateY(0);
+        }
+
+        .start-btn.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .start-btn.disabled:hover {
+            transform: none;
+            box-shadow:
+                0 0 20px rgba(166, 28, 0, 0.5),
+                0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .start-btn.disabled::before {
+            display: none;
+        }
+
+        /* 底部信息 */
+        .footer {
+            color: var(--tang-gold-light);
+            font-size: 0.85rem;
+            opacity: 0.6;
+            margin-top: 18px;
+        }
+
+        /* 弹窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal {
+            background: linear-gradient(135deg, #FDF5E6 0%, #F3E5AB 50%, #E8D9A0 100%);
+            border: 5px solid var(--tang-gold);
+            border-radius: 24px;
+            padding: 45px 35px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow:
+                0 0 100px rgba(212, 175, 55, 0.7),
+                0 30px 80px rgba(0, 0, 0, 0.6);
+            transform: scale(0.7) translateY(50px);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            border-radius: 18px;
+            pointer-events: none;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--tang-red);
+            color: #fff;
+            border: 2px solid var(--tang-gold);
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--tang-red-dark);
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .modal h2 {
+            color: var(--tang-red);
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            letter-spacing: 4px;
+        }
+
+        .modal-prize-img {
+            width: 160px;
+            height: 160px;
+            border-radius: 18px;
+            object-fit: cover;
+            border: 5px solid var(--tang-gold);
+            box-shadow:
+                0 0 35px rgba(212, 175, 55, 0.6),
+                0 12px 35px rgba(0, 0, 0, 0.4);
+            margin-bottom: 22px;
+            animation: prizeFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes prizeFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(-2deg);
+            }
+
+            50% {
+                transform: translateY(-8px) rotate(2deg);
+            }
+        }
+
+        .modal-prize-name {
+            color: var(--tang-ink);
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            letter-spacing: 3px;
+        }
+
+        .modal-prize-desc {
+            color: #664400;
+            font-size: 1rem;
+            opacity: 0.85;
+        }
+
+        .modal-btn {
+            margin-top: 25px;
+            padding: 14px 50px;
+            background: var(--primary-gradient);
+            color: var(--tang-gold);
+            border: 3px solid var(--tang-gold);
+            border-radius: 40px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            letter-spacing: 4px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .modal-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 10px 30px rgba(166, 28, 0, 0.6);
+        }
+
+        /* 粒子效果 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--tang-gold);
+            border-radius: 50%;
+            opacity: 0;
+            animation: floatUp 10s ease-in-out infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) scale(0);
+            }
+
+            10% {
+                opacity: 0.6;
+            }
+
+            90% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(1);
+            }
+        }
+
+        /* 庆祝特效 */
+        .confetti {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1999;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(1080deg);
+                opacity: 0;
+            }
+        }
+
+        /* 灯笼装饰 */
+        .lantern {
+            position: fixed;
+            font-size: 2.5rem;
+            opacity: 0.2;
+            animation: lanternSway 4s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        .lantern-left {
+            left: 3%;
+            top: 10%;
+        }
+
+        .lantern-right {
+            right: 3%;
+            top: 15%;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes lanternSway {
+
+            0%,
+            100% {
+                transform: rotate(-8deg);
+            }
+
+            50% {
+                transform: rotate(8deg);
+            }
+        }
+
+        /* 响应式 */
+        @media (max-width: 500px) {
+            .header h1 {
+                font-size: 2rem;
+                letter-spacing: 6px;
+            }
+
+            .prize-ring {
+                gap: 4px;
+            }
+
+            .prize-cell {
+                border-width: 2px;
+                border-radius: 6px;
+            }
+
+            .prize-cell .prize-name {
+                font-size: 0.55rem;
+                padding: 8px 2px 3px;
+            }
+
+            .center-title {
+                font-size: 1.2rem;
+                letter-spacing: 3px;
+                margin-bottom: 10px;
+            }
+
+            .start-btn {
+                padding: 10px 25px;
+                font-size: 1rem;
+                letter-spacing: 4px;
+            }
+
+            .center-area {
+                width: calc(60% - 16px);
+                height: calc(60% - 16px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-accent"></div>
+
+    <!-- 灯笼装饰 -->
+    <div class="lantern lantern-left">🏮</div>
+    <div class="lantern lantern-right">🏮</div>
+
+    <!-- 粒子背景 -->
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>御膳抽奖</h1>
+            <p>— 点击开启，一探今日珍馐 —</p>
+        </div>
+
+        <div class="wheel-board">
+            <div class="prize-ring" id="prizeRing">
+                <!-- 动态生成奖品格子 -->
+            </div>
+
+            <!-- 中间按钮区 -->
+            <div class="center-area">
+                <div class="center-title">🎰 抽奖</div>
+                <button class="start-btn" id="startBtn" onclick="startLottery()">
+                    开始
+                </button>
+            </div>
+        </div>
+
+        <div class="footer">
+            🏮 每次抽奖皆为天意，愿君好运常伴 🏮
+        </div>
+    </div>
+
+    <!-- 中奖弹窗 -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2>🎉 恭喜获得 🎉</h2>
+            <img class="modal-prize-img" id="prizeImg" src="" alt="奖品">
+            <div class="modal-prize-name" id="prizeName"></div>
+            <div class="modal-prize-desc" id="prizeDesc"></div>
+            <button class="modal-btn" onclick="closeModal()">收下好运</button>
+        </div>
+    </div>
+
+    <script>
+        // ============ 奖品配置（餐品可重复，自由添加）============
+        // 按顺序排列在轮盘边框上，围成一圈共16格
+        // 如需重复某餐品，直接多次添加即可
+        var prizes = [
+            { name: '麻薯包', image: 'img/mashu.jpg', desc: '软糯香甜，Q弹十足', probability: 12 },
+            { name: '蛋挞', image: 'img/danmaisu.jpg', desc: '外酥里嫩，奶香浓郁', probability: 12 },
+            { name: '冰淇淋', image: 'img/bingqiling.jpg', desc: '入口即化，甜而不腻', probability: 10 },
+            { name: '双皮奶', image: 'img/shuangpinai.jpg', desc: '奶香浓郁，嫩滑如丝', probability: 12 },
+            { name: '水果捞', image: 'img/shuiguolao.jpg', desc: '精选时令鲜果', probability: 10 },
+            { name: '无花果', image: 'img/wuhuaguo.jpg', desc: '天然果干，甜蜜可口', probability: 8 },
+            { name: '苹果派', image: 'img/pingguopai.jpg', desc: '金秋硕果，香颂雅派', probability: 10 },
+            { name: '肉松卷', image: 'img/rousong.jpg', desc: '咸香酥脆，回味无穷', probability: 14 },
+            { name: '麻薯包', image: 'img/mashu.jpg', desc: '软糯香甜，Q弹十足', probability: 12 },
+            { name: '蛋挞', image: 'img/danmaisu.jpg', desc: '外酥里嫩，奶香浓郁', probability: 12 },
+            { name: '冰淇淋', image: 'img/bingqiling.jpg', desc: '入口即化，甜而不腻', probability: 10 },
+            { name: '双皮奶', image: 'img/shuangpinai.jpg', desc: '奶香浓郁，嫩滑如丝', probability: 12 },
+            { name: '水果捞', image: 'img/shuiguolao.jpg', desc: '精选时令鲜果', probability: 10 },
+            { name: '无花果', image: 'img/wuhuaguo.jpg', desc: '天然果干，甜蜜可口', probability: 8 },
+            { name: '苹果派', image: 'img/pingguopai.jpg', desc: '金秋硕果，香颂雅派', probability: 10 },
+            { name: '肉松卷', image: 'img/rousong.jpg', desc: '咸香酥脆，回味无穷', probability: 14 }
+        ];
+
+        // 轮盘格子顺序（5x5网格，只用外圈16格，按顺时针顺序）
+        // 顶行: 0,1,2,3,4 | 右列: 9,14,19,24 | 底行: 23,22,21,20 | 左列: 15,10,5
+        var ringOrder = [0, 1, 2, 3, 4, 9, 14, 19, 24, 23, 22, 21, 20, 15, 10, 5];
+
+        var isRunning = false;
+        var currentIndex = -1;
+        var animationTimer = null;
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            initPrizeRing();
+            initParticles();
+        });
+
+        // 初始化轮盘网格
+        function initPrizeRing() {
+            var grid = document.getElementById('prizeRing');
+            var html = '';
+
+            // 创建5x5网格（25格）
+            for (var i = 0; i < 25; i++) {
+                // 检查是否在外圈
+                var ringIndex = ringOrder.indexOf(i);
+
+                if (ringIndex !== -1) {
+                    // 外圈格子 - 放置奖品
+                    var prizeIndex = ringIndex % prizes.length;
+                    var prize = prizes[prizeIndex];
+                    html += '<div class="prize-cell" data-ring-index="' + ringIndex + '" id="cell-' + ringIndex + '">' +
+                        '<img src="' + prize.image + '" alt="' + prize.name + '">' +
+                        '<div class="prize-name">' + prize.name + '</div>' +
+                        '</div>';
+                } else {
+                    // 中间格子 - 空白占位（被center-area覆盖）
+                    html += '<div class="prize-cell" style="visibility:hidden;"></div>';
+                }
+            }
+
+            grid.innerHTML = html;
+        }
+
+        // 加权随机选择（返回ringIndex）
+        function weightedRandom() {
+            var totalWeight = 0;
+            for (var i = 0; i < 16; i++) {
+                var prizeIndex = i % prizes.length;
+                totalWeight += prizes[prizeIndex].probability;
+            }
+
+            var random = Math.random() * totalWeight;
+            var cumulative = 0;
+
+            for (var i = 0; i < 16; i++) {
+                var prizeIndex = i % prizes.length;
+                cumulative += prizes[prizeIndex].probability;
+                if (random <= cumulative) {
+                    return i;
+                }
+            }
+            return 15;
+        }
+
+        // 清除所有状态
+        function clearAllStates() {
+            for (var i = 0; i < 16; i++) {
+                var cell = document.getElementById('cell-' + i);
+                if (cell) {
+                    cell.classList.remove('active', 'winner');
+                }
+            }
+        }
+
+        // 高亮指定格子
+        function highlightCell(ringIndex) {
+            clearAllStates();
+            var cell = document.getElementById('cell-' + ringIndex);
+            if (cell) {
+                cell.classList.add('active');
+            }
+            currentIndex = ringIndex;
+        }
+
+        // 开始抽奖
+        function startLottery() {
+            if (isRunning) return;
+
+            isRunning = true;
+            var btn = document.getElementById('startBtn');
+            btn.classList.add('disabled');
+            btn.textContent = '抽奖中';
+
+            // 预先决定中奖位置
+            var winRingIndex = weightedRandom();
+
+            // 动画参数
+            var totalRounds = 3; // 转几圈
+            var totalSteps = totalRounds * 16 + winRingIndex;
+            var currentStep = 0;
+            var baseInterval = 50; // 起始速度（毫秒）
+
+            function animate() {
+                var progress = currentStep / totalSteps;
+
+                // 缓动：开始快，结束慢
+                var interval;
+                if (progress < 0.5) {
+                    interval = baseInterval;
+                } else if (progress < 0.8) {
+                    interval = baseInterval + (progress - 0.5) * 300;
+                } else {
+                    interval = baseInterval + 150 + (progress - 0.8) * 800;
+                }
+
+                var ringIndex = currentStep % 16;
+                highlightCell(ringIndex);
+
+                currentStep++;
+
+                if (currentStep <= totalSteps) {
+                    animationTimer = setTimeout(animate, interval);
+                } else {
+                    // 动画结束，显示中奖
+                    finishLottery(winRingIndex);
+                }
+            }
+
+            // 开始循环亮灯动画
+            animate();
+        }
+
+        // 结束抽奖
+        function finishLottery(winRingIndex) {
+            var cell = document.getElementById('cell-' + winRingIndex);
+            if (cell) {
+                cell.classList.remove('active');
+                cell.classList.add('winner');
+            }
+
+            // 获取中奖奖品信息
+            var prizeIndex = winRingIndex % prizes.length;
+            var prize = prizes[prizeIndex];
+
+            // 延迟显示弹窗
+            setTimeout(function () {
+                showPrize(prize);
+
+                isRunning = false;
+                var btn = document.getElementById('startBtn');
+                btn.classList.remove('disabled');
+                btn.textContent = '开始';
+            }, 1800);
+        }
+
+        // 显示奖品
+        function showPrize(prize) {
+            document.getElementById('prizeImg').src = prize.image;
+            document.getElementById('prizeName').textContent = prize.name;
+            document.getElementById('prizeDesc').textContent = prize.desc;
+            document.getElementById('modalOverlay').classList.add('show');
+            createConfetti();
+        }
+
+        // 关闭弹窗
+        function closeModal(e) {
+            if (e && e.target !== document.getElementById('modalOverlay')) return;
+            document.getElementById('modalOverlay').classList.remove('show');
+            clearAllStates();
+        }
+
+        // 庆祝彩带
+        function createConfetti() {
+            var colors = ['#D4AF37', '#F2D57E', '#A61C00', '#FF6B6B', '#FFC107', '#E91E63', '#9C27B0'];
+            for (var i = 0; i < 80; i++) {
+                var confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.width = (6 + Math.random() * 10) + 'px';
+                confetti.style.height = (6 + Math.random() * 10) + 'px';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                confetti.style.animation = 'confettiFall ' + (2.5 + Math.random() * 2) + 's ease-out forwards';
+                confetti.style.animationDelay = Math.random() * 0.8 + 's';
+                document.body.appendChild(confetti);
+
+                setTimeout(function (el) {
+                    el.remove();
+                }.bind(null, confetti), 5000);
+            }
+        }
+
+        // 粒子背景
+        function initParticles() {
+            var container = document.getElementById('particles');
+            for (var i = 0; i < 25; i++) {
+                var particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = (3 + Math.random() * 5) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.animationDuration = (8 + Math.random() * 6) + 's';
+                container.appendChild(particle);
+            }
+        }
+    </script>
+</body>
+
+</html>

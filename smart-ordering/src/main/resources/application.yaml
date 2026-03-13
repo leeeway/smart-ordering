@@ -1,0 +1,174 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: smart-ordering
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  jackson:
+    mapper:
+      ACCEPT_CASE_INSENSITIVE_PROPERTIES: true
+  datasource:
+    druid:
+      initial-size: 2
+      max-active: 50
+      max-wait: 60000
+      min-evictable-idle-time-millis: 25200000
+      min-idle: 2
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: true
+      time-between-eviction-runs-millis: 60000
+      validation-query: select 1
+    aslogdb:
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      type: com.alibaba.druid.pool.DruidDataSource
+      url: jdbc:sqlserver://localhost:1433;DatabaseName=your_database
+      username: ${DB_USERNAME:your_username}
+      password: ${DB_PASSWORD:your_password}
+ADVisitTempCookieHour: 8
+ADVisitForEverCookieHour: 240
+PageVisitGuidCookieExpiresHour: 8
+
+# 商品订购功能配置
+order:
+  # 订单功能是否启用
+  enabled: true
+  # 企业微信 WebHook URL
+  webhook-url: ${WECHAT_WEBHOOK_URL:}
+  # 店铺列表配置（示例）
+  # 店铺列表配置
+  shops:
+    - id: "shop001"
+      name: "御馔海焙坊"
+      description: "唐风雅韵，品味纯正，精选御用烘焙"
+      avatar-url: "tang_lady.png"
+      background-url: "tang_bg.png"
+      products:
+        - id: "prod001"
+          name: "锦鲤玉卷"
+          price: 5.00
+          image-url: "https://via.placeholder.com/150/A61C00/ffffff?text=锦鲤玉卷"
+          description: "锦鲤伴红袖，玉卷带余香"
+          available: true
+        - id: "prod002"
+          name: "瑞鲑锦宴"
+          price: 5.00
+          image-url: "https://via.placeholder.com/150/A61C00/ffffff?text=瑞鲑锦宴"
+          description: "深海珍鲑，锦绣佳肴"
+          available: true
+        - id: "prod003"
+          name: "玉蔬彩堂"
+          price: 4.00
+          image-url: "https://via.placeholder.com/150/A61C00/ffffff?text=玉蔬彩堂"
+          description: "时令鲜蔬，五彩缤纷"
+          available: true
+        - id: "prod004"
+          name: "金果瑞派"
+          price: 3.00
+          image-url: "https://via.placeholder.com/150/A61C00/ffffff?text=金果瑞派"
+          description: "金秋硕果，香颂雅派"
+          available: true
+        - id: "prod005"
+          name: "麻薯包"
+          price: 2.00
+          image-url: "img/mashu.jpg"
+          description: "软糯香甜，Q弹十足"
+          available: true
+    - id: "shop002"
+      name: "华京冰果肆"
+      description: "主营水果捞，冰激凌，双皮奶，《古》法酿造"
+      avatar-url: "bingguo_lady.png"
+      background-url: "bingguo_bg.png"
+      products:
+        - id: "prod101"
+          name: "杨梅荔枝饮"
+          price: 8.00
+          image-url: "https://via.placeholder.com/150/D4AF37/000000?text=杨梅荔枝饮"
+          description: "酸甜清爽，消暑良品"
+          available: true
+        - id: "prod102"
+          name: "凝霜琼酪（双皮奶)"
+          price: 6.00
+          image-url: "https://via.placeholder.com/150/D4AF37/000000?text=双皮奶"
+          description: "奶香浓郁，嫩滑如丝"
+          available: true
+        - id: "prod103"
+          name: "鲜果冷泉碗（水果捞）"
+          price: 12.00
+          image-url: "https://via.placeholder.com/150/D4AF37/000000?text=水果捞"
+          description: "精选时令鲜果，满口留香"
+          available: true
+        - id: "prod104"
+          name: "酥酪冰团（冰淇淋）"
+          price: 5.00
+          image-url: "https://via.placeholder.com/150/D4AF37/000000?text=冰激凌"
+          description: "入口即化，甜而不腻"
+          available: true
+    - id: "shop003"
+      name: "长安甜馥肆"
+      description: "长安甜馥肆，主营精致甜点与雅致饮品"
+      avatar-url: "sweet_lady.png"
+      background-url: "sweet_bg.png"
+      products:
+        - id: "prod201"
+          name: "玉乳金酥挞"
+          price: 6.00
+          image-url: "https://via.placeholder.com/150/f2d57e/000000?text=蛋挞"
+          description: "外酥里嫩，奶香浓郁"
+          available: true
+        - id: "prod202"
+          name: "咖啡(香黑玉饮)"
+          price: 15.00
+          image-url: "https://via.placeholder.com/150/2F1B1B/ffffff?text=咖啡"
+          description: "香浓醇厚，回味悠长"
+          available: true
+        - id: "prod203"
+          name: "花边蛋挞小蛋糕"
+          price: 8.00
+          image-url: "https://via.placeholder.com/150/f2d57e/000000?text=小蛋糕"
+          description: "精致花边，甜美诱人"
+          available: true
+        - id: "prod204"
+          name: "特色小吃(盛唐小馔)"
+          price: 12.00
+          image-url: "https://via.placeholder.com/150/D4AF37/000000?text=小吃"
+          description: "盛唐风味，精致可口"
+          available: true
+        - id: "prod205"
+          name: "冰粉(甘露冻玉饮)"
+          price: 5.00
+          image-url: "https://via.placeholder.com/150/F8F4E3/000000?text=冰粉"
+          description: "清凉解暑，甘甜如露"
+          available: true
+    - id: "shop004"
+      name: "唐肆辣糕坊"
+      description: "主营唐风辣味糕点，火热出炉，麻辣鲜香"
+      avatar-url: "img/tangsi_avatar.png"
+      background-url: "img/tangsi_bg.jpg"
+      products:
+        - id: "prod301"
+          name: "火凤辣糕"
+          price: 6.00
+          image-url: "https://via.placeholder.com/150/FF4500/ffffff?text=火凤辣糕"
+          description: "色泽红亮，麻辣诱人"
+          available: true
+        - id: "prod302"
+          name: "椒香酥饼"
+          price: 4.00
+          image-url: "https://via.placeholder.com/150/FF4500/ffffff?text=椒香酥饼"
+          description: "椒香四溢，酥脆可口"
+          available: true
+        - id: "prod303"
+          name: "红油玉糕"
+          price: 5.00
+          image-url: "https://via.placeholder.com/150/FF4500/ffffff?text=红油玉糕"
+          description: "温润如玉，红油点睛"
+          available: true
+        - id: "prod304"
+          name: "麻辣团子"
+          price: 3.00
+          image-url: "https://via.placeholder.com/150/FF4500/ffffff?text=麻辣团子"
+          description: "软糯麻辣，层次分明"
+          available: true

@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    kubernetes:
+      enabled: false
+      reload:
+        enabled: true
+        mode: polling
+        period: 30000
+      config:
+        sources:
+          - name: your-config-name
+      secrets:
+        enable-api: true
+        sources:
+          - name: your-secret-name

@@ -1,0 +1,2086 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="御馔海焙坊 - 唐风雅韵，品味纯正">
+    <title>御馔海焙坊</title>
+    <style>
+        :root {
+            /* 唐风色谱 - 大红、玄青、琥珀金、雅白 */
+            --tang-red: #A61C00;
+            --tang-red-dark: #730100;
+            --tang-gold: #D4AF37;
+            --tang-gold-light: #F2D57E;
+            --tang-black: #1A0909;
+            --tang-ink: #2F1B1B;
+            --tang-ivory: #F8F4E3;
+            --tang-paper: #FFF9EB;
+
+            --primary-gradient: linear-gradient(135deg, var(--tang-red) 0%, var(--tang-red-dark) 100%);
+            --gold-gradient: linear-gradient(135deg, var(--tang-gold) 0%, var(--tang-gold-light) 100%);
+
+            /* 背景颜色 */
+            --bg-primary: var(--tang-black);
+            --bg-card: rgba(255, 249, 235, 0.05);
+            /* 半透明米纸感 */
+            --border-gold: 1px solid var(--tang-gold);
+
+            /* 文字颜色 */
+            --text-gold: var(--tang-gold);
+            --text-ivory: var(--tang-ivory);
+            --text-muted: rgba(248, 244, 227, 0.6);
+
+            /* 阴影与圆角 */
+            --tang-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --radius-md: 8px;
+            /* 唐代风格更硬朗，圆角稍小 */
+            --radius-lg: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "STKaiti", serif;
+            background-color: var(--tang-black);
+            color: var(--text-ivory);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: url('tang_bg.png');
+            background-size: 400px;
+            background-repeat: repeat;
+            background-attachment: fixed;
+        }
+
+        /* 蒙层增加质感 */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(26, 9, 9, 0.7) 0%, rgba(26, 9, 9, 0.95) 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* 顶部装饰条 */
+        .top-accent {
+            height: 4px;
+            background: var(--gold-gradient);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 120px;
+            position: relative;
+        }
+
+        /* 头部设计 */
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 30px;
+            background: rgba(166, 28, 0, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: var(--radius-lg);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* 唐装小姐姐装饰 */
+        .lady-avatar {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            border: 3px solid var(--tang-gold);
+            background-image: url('tang_lady.png');
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 0 20px var(--tang-gold);
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--tang-gold);
+            letter-spacing: 8px;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-weight: 800;
+        }
+
+        /* 公告贴 */
+        .announcement-bar {
+            background: rgba(166, 28, 0, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 50px;
+            padding: 6px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 10px;
+            max-width: 95%;
+            backdrop-filter: blur(5px);
+        }
+
+        .announcement-tag {
+            background: var(--tang-red);
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #headerDesc {
+            color: var(--tang-gold-light);
+            font-size: 0.95rem;
+            margin: 0;
+            letter-spacing: 1px;
+            font-style: normal;
+            font-weight: 500;
+        }
+
+        /* 店铺选择 */
+        .shop-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            position: sticky;
+            top: 15px;
+            z-index: 500;
+            overflow-x: auto;
+            /* 关键：支持横向滚动 */
+            -webkit-overflow-scrolling: touch;
+            padding: 5px;
+            scrollbar-width: none;
+            /* 隐藏火狐滚动条 */
+        }
+
+        .shop-tabs::-webkit-scrollbar {
+            display: none;
+            /* 隐藏 Chrome/Safari 滚动条 */
+        }
+
+        .shop-tab {
+            background: var(--tang-ink);
+            border: 1px solid var(--tang-gold);
+            padding: 10px 20px;
+            color: var(--tang-gold-light);
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            white-space: nowrap;
+            /* 关键：防止店名换行 */
+            flex-shrink: 0;
+            /* 防止被压缩 */
+        }
+
+        /* 移动端特殊优化 */
+        @media (max-width: 600px) {
+            .shop-tabs {
+                justify-content: flex-start;
+                /* 移动端左对齐，示意可滑动 */
+                padding-left: 20px;
+                padding-right: 20px;
+                margin-left: -20px;
+                margin-right: -20px;
+            }
+
+            .shop-tab {
+                padding: 8px 15px;
+                font-size: 0.95rem;
+            }
+        }
+
+        .shop-tab:hover {
+            background: rgba(166, 28, 0, 0.3);
+        }
+
+        .shop-tab.active {
+            background: var(--tang-red);
+            color: var(--tang-ivory);
+            box-shadow: 0 0 15px rgba(166, 28, 0, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* 布局 - 电商风格排版 */
+        .main-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: flex-start;
+            /* 确保顶部对齐 */
+        }
+
+        .content-left {
+            flex: 1;
+            min-width: 320px;
+        }
+
+        .content-right {
+            width: 380px;
+        }
+
+        @media (max-width: 900px) {
+            .content-right {
+                width: 100%;
+            }
+        }
+
+        /* 板块标题 */
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--tang-gold);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .section-title::before {
+            content: '🧧';
+            font-size: 1.2rem;
+        }
+
+        /* 商品卡片网格 */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: var(--radius-md);
+            padding: 15px;
+            display: flex;
+            gap: 15px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .product-card:hover {
+            border-color: var(--tang-gold);
+            background: rgba(166, 28, 0, 0.08);
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .product-card.selected {
+            background: rgba(166, 28, 0, 0.15);
+            border-color: var(--tang-gold);
+            box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+
+        .product-image {
+            width: 90px;
+            height: 90px;
+            border-radius: 4px;
+            object-fit: cover;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            -webkit-tap-highlight-color: transparent;
+            /* 移除移动端点击高亮 */
+        }
+
+        .product-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-name {
+            font-size: 1.15rem;
+            color: var(--tang-gold-light);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .product-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .product-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            color: var(--tang-gold);
+            font-weight: 700;
+        }
+
+        /* 数量控件 */
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 4px;
+            padding: 2px;
+        }
+
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            color: var(--tang-gold);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .qty-btn:hover:not(:disabled) {
+            background: rgba(166, 28, 0, 0.3);
+        }
+
+        .qty-btn:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
+
+        .qty-value {
+            width: 30px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--tang-ivory);
+        }
+
+        /* 书卷式样表单与订单 */
+        .tang-paper-card {
+            background: rgba(255, 249, 235, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 25px;
+            border-radius: var(--radius-md);
+            margin-bottom: 25px;
+            backdrop-filter: blur(5px);
+            position: relative;
+        }
+
+        .tang-paper-card::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.05);
+            pointer-events: none;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.95rem;
+            color: var(--tang-gold-light);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 12px;
+            color: var(--tang-ivory);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--tang-gold);
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+        }
+
+        /* 订单明细列表 */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed rgba(212, 175, 55, 0.2);
+        }
+
+        .cart-item-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .cart-item-remove {
+            background: rgba(166, 28, 0, 0.3);
+            border: 1px solid var(--tang-red);
+            color: var(--tang-gold-light);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            margin-right: 10px;
+        }
+
+        .cart-item-remove:hover {
+            background: var(--tang-red);
+            transform: scale(1.1);
+        }
+
+        .cart-total {
+            margin-top: 20px;
+            border-top: 2px solid var(--tang-gold);
+            padding-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-price {
+            font-size: 1.5rem;
+            color: var(--tang-gold);
+            font-weight: 800;
+        }
+
+        /* 底部操作栏 - 宫廷红金配色 */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--tang-ink);
+            border-top: 2px solid var(--tang-gold);
+            padding: 15px 20px 30px;
+            z-index: 1000;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* 图片预览 - 御鉴风格 */
+        .image-preview-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 20px;
+        }
+
+        .image-preview-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .image-preview-content {
+            position: relative;
+            max-width: 100%;
+            max-height: 90vh;
+            border: 1px solid var(--tang-gold);
+            padding: 5px;
+            background: var(--tang-ink);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+            border-radius: 4px;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .image-preview-overlay.show .image-preview-content {
+            transform: scale(1);
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 75vh;
+            display: block;
+            object-fit: contain;
+            border-radius: 2px;
+        }
+
+        .preview-close {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            color: var(--tang-gold);
+            font-size: 2.5rem;
+            cursor: pointer;
+            padding: 10px;
+            line-height: 1;
+        }
+
+        .preview-name {
+            margin-top: 15px;
+            text-align: center;
+            color: var(--tang-gold-light);
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+
+        .bottom-bar-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .submit-btn {
+            background: var(--primary-gradient);
+            color: var(--tang-gold-light);
+            border: 1px solid var(--tang-gold);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(166, 28, 0, 0.4);
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(166, 28, 0, 0.6);
+            filter: brightness(1.2);
+        }
+
+        .submit-btn:disabled {
+            filter: grayscale(1);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 提示框 - 升級为“御旨”风格弹窗 */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: linear-gradient(135deg, var(--tang-ink) 0%, var(--tang-black) 100%);
+            border: 2px solid var(--tang-gold);
+            padding: 40px 30px 30px;
+            border-radius: 12px;
+            z-index: 2000;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            visibility: hidden;
+            color: var(--tang-gold-light);
+            font-weight: 600;
+            max-width: 85vw;
+            width: 320px;
+            text-align: center;
+            white-space: pre-wrap;
+            line-height: 1.8;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(212, 175, 55, 0.1);
+            pointer-events: none;
+        }
+
+        .toast-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: var(--tang-gold);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 5px;
+            transition: all 0.2s;
+        }
+
+        .toast-close:hover {
+            transform: scale(1.2);
+            color: var(--tang-gold-light);
+        }
+
+        .toast.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .toast::before {
+            content: '📜';
+            display: block;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        #toastOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 1999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #toastOverlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        /* 地址单选样式 */
+        .address-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .address-option {
+            display: none;
+        }
+
+        .address-label {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 10px 8px;
+            border-radius: var(--radius-md);
+            color: var(--tang-gold-light);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 600;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .address-option:checked+.address-label {
+            background: var(--tang-red);
+            color: var(--tang-ivory);
+            border-color: var(--tang-gold);
+            box-shadow: 0 0 15px rgba(166, 28, 0, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* 成功页 */
+        .success-page {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: var(--tang-gold);
+            margin-bottom: 20px;
+        }
+
+        .order-no-box {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            word-break: break-all;
+        }
+
+        /* 飞入购物车动画 */
+        .fly-item {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gold-gradient);
+            z-index: 9999;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 0 20px var(--tang-gold);
+            animation: flyToCart 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes flyToCart {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+
+            50% {
+                transform: translate(calc(var(--fly-x) * 0.5), calc(var(--fly-y) * 0.3)) scale(0.7) rotate(180deg);
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: translate(var(--fly-x), var(--fly-y)) scale(0.2) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 底部栏购物车图标动画 */
+        .cart-bounce {
+            animation: cartBounce 0.4s ease;
+        }
+
+        @keyframes cartBounce {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.3);
+            }
+        }
+
+        /* 浮动结算面板 */
+        .checkout-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, var(--tang-ink) 0%, rgba(47, 27, 27, 0.98) 100%);
+            border-top: 2px solid var(--tang-gold);
+            z-index: 1100;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 0 20px 30px;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .checkout-panel.show {
+            transform: translateY(0);
+        }
+
+        .checkout-panel-header {
+            position: sticky;
+            top: 0;
+            background: var(--tang-ink);
+            padding: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            margin-bottom: 15px;
+            z-index: 10;
+        }
+
+        .checkout-panel-title {
+            font-size: 1.2rem;
+            color: var(--tang-gold);
+            font-weight: 700;
+        }
+
+        .checkout-panel-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(166, 28, 0, 0.3);
+            border: 1px solid var(--tang-gold);
+            color: var(--tang-gold);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .checkout-panel-close:hover {
+            background: var(--tang-red);
+            transform: scale(1.1);
+        }
+
+        .checkout-panel-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1099;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .checkout-panel-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 底部栏增强 - 购物车图标 */
+        .cart-icon-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        .cart-icon {
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .cart-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--tang-red);
+            color: var(--tang-ivory);
+            font-size: 0.7rem;
+            font-weight: bold;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--tang-ink);
+        }
+
+        /* 移动端隐藏PC右侧栏 */
+        @media (max-width: 900px) {
+            .content-right {
+                display: none;
+            }
+
+            .content-left {
+                min-width: 100%;
+            }
+        }
+
+        /* 商品卡片添加按钮优化 */
+        .add-to-cart-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--tang-red);
+            border: 1px solid var(--tang-gold);
+            color: var(--tang-gold-light);
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(166, 28, 0, 0.4);
+        }
+
+        .add-to-cart-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 4px 12px rgba(166, 28, 0, 0.6);
+        }
+
+        .add-to-cart-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 规则按钮与弹窗 */
+        .rules-btn {
+            position: fixed;
+            right: 0;
+            top: 100px;
+            z-index: 900;
+            background: var(--primary-gradient);
+            color: var(--tang-gold-light);
+            border: 1px solid var(--tang-gold);
+            border-right: none;
+            padding: 10px 15px;
+            border-radius: 30px 0 0 30px;
+            cursor: pointer;
+            box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .rules-btn:hover {
+            padding-right: 25px;
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 600px) {
+            .rules-btn {
+                top: 120px;
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+        }
+
+        .scroll-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.7);
+            width: 92%;
+            max-width: 480px;
+            max-height: 85vh;
+            background: #FDF5E6;
+            color: #331100;
+            z-index: 2100;
+            padding: 40px 25px;
+            border-radius: 4px;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.9);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            overflow-y: auto;
+            border: 2px solid #5D0000;
+            background-image: radial-gradient(circle at 100% 150%, #FDF5E6 24%, #F3E5AB 25%, #F3E5AB 28%, #FDF5E6 29%, #FDF5E6 36%, #F3E5AB 36%, #F3E5AB 40%, transparent 40%),
+                radial-gradient(circle at 0 150%, #FDF5E6 24%, #F3E5AB 25%, #F3E5AB 28%, #FDF5E6 29%, #FDF5E6 36%, #F3E5AB 36%, #F3E5AB 40%, transparent 40%),
+                radial-gradient(circle at 50% 100%, #F3E5AB 10%, #FDF5E6 11%, #FDF5E6 23%, #F3E5AB 24%, #F3E5AB 30%, #FDF5E6 31%, #FDF5E6 43%, #F3E5AB 44%, #F3E5AB 50%, #FDF5E6 51%);
+            background-size: 100% 100%;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .scroll-modal.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+
+
+        .scroll-header {
+            text-align: center;
+            border-bottom: 2px double #A61C00;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .scroll-header h2 {
+            color: #A61C00;
+            font-family: "STKaiti", serif;
+            font-size: 1.8rem;
+            letter-spacing: 4px;
+        }
+
+        .scroll-content {
+            font-family: "STKaiti", serif;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .scroll-content b {
+            color: #A61C00;
+        }
+
+        .rules-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: rgba(166, 28, 0, 0.05);
+            border: 1px solid #A61C00;
+        }
+
+        .rules-table th {
+            background: #A61C00;
+            color: #FFF;
+            padding: 8px;
+            font-size: 0.9rem;
+        }
+
+        .rules-table td {
+            border: 1px solid #A61C00;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .scroll-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.8rem;
+            color: #A61C00;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .scroll-footer {
+            margin-top: 20px;
+            text-align: center;
+            font-style: italic;
+            color: #664400;
+            font-size: 0.9rem;
+            border-top: 1px dashed #A61C00;
+            padding-top: 10px;
+        }
+
+        /* 订单轮播 - 升级版 */
+        .order-carousel {
+            background: rgba(255, 249, 235, 0.03);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-left: 4px solid var(--tang-red);
+            border-radius: 4px;
+            /* 改为微圆角，更有古风碑刻感 */
+            margin: -5px auto 30px;
+            max-width: 800px;
+            height: 44px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 0;
+            position: relative;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 上下遮罩，制造文字淡入淡出效果 */
+        .order-carousel::before,
+        .order-carousel::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 10px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .order-carousel::before {
+            top: 0;
+            background: linear-gradient(to bottom, var(--tang-black), transparent);
+        }
+
+        .order-carousel::after {
+            bottom: 0;
+            background: linear-gradient(to top, var(--tang-black), transparent);
+        }
+
+        .carousel-notice-icon {
+            width: 50px;
+            height: 100%;
+            background: rgba(212, 175, 55, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            border-right: 1px solid rgba(212, 175, 55, 0.2);
+            flex-shrink: 0;
+            z-index: 6;
+        }
+
+        .carousel-track {
+            flex: 1;
+            position: relative;
+            height: 44px;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 4;
+        }
+
+        .carousel-item {
+            height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 0 15px;
+            font-size: 0.9rem;
+            color: var(--text-ivory);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .carousel-tag {
+            border: 1px solid var(--tang-red);
+            color: var(--tang-red);
+            font-size: 0.7rem;
+            padding: 0 5px;
+            border-radius: 2px;
+            line-height: 1.4;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .order-carousel {
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+
+        /* 怀旧零食单图样式（新增） */
+        .snack-single-img {
+            max-width: 90%; /* 适配弹层宽度，不溢出 */
+            max-height: 300px; /* 限制高度，避免图片过长 */
+            object-fit: contain; /* 完整显示图片，不拉伸变形 */
+            border: 3px solid #A61C00; /* 唐风红边，和弹层配色统一 */
+            border-radius: 6px; /* 微圆角，适配页面风格 */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* 轻微阴影，增加立体感 */
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="top-accent"></div>
+    <div id="toastOverlay"></div>
+    <div id="toast" class="toast">🏮 请选择您的珍馐</div>
+
+    <div id="mainPage" class="container">
+        <!-- 悬浮规则按钮 -->
+        <div class="rules-btn" onclick="openRules()">
+            <span>📜</span> 幸运捉影
+        </div>
+        <!-- 怀旧零食悬浮按钮（新增） -->
+        <div class="rules-btn" onclick="openSnack()" style="top: 160px;">
+            <span>🍬</span> 怀旧零食
+        </div>
+
+        <header class="header">
+            <div class="lady-avatar" id="shopAvatar"></div>
+            <h1 id="headerTitle">御馔海焙坊</h1>
+            <div class="announcement-bar">
+                <span class="announcement-tag">驿站公告</span>
+                <p id="headerDesc">唐装小姐姐免费送到工位，每消费满10元随机抽一包怀旧童年小零食；2月6日开启预定，珍馐菜品陆续呈递。</p>
+            </div>
+        </header>
+
+        <!-- 最近下单轮播 -->
+        <div id="orderCarousel" class="order-carousel" style="display: none;">
+            <div class="carousel-notice-icon">📢</div>
+            <div id="carouselTrack" class="carousel-track">
+                <!-- 动态填充最近订单 -->
+            </div>
+        </div>
+
+        <!-- 店铺选择 -->
+        <div id="shopTabs" class="shop-tabs">
+            <!-- 动态生成店铺选项 -->
+        </div>
+
+        <div class="main-layout">
+            <!-- 左侧：珍馐名录 -->
+            <div class="content-left">
+                <h2 class="section-title" id="shopTitle">今日珍馐</h2>
+                <div id="productList" class="product-grid">
+                    <!-- 商品加载中... -->
+                    <div style="grid-column: 1/-1; padding: 40px; text-align: center; color: var(--tang-gold);">
+                        正在为您呈上名录...
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：下单信息 -->
+            <div class="content-right">
+                <h2 class="section-title">配送信息</h2>
+                <section class="tang-paper-card">
+                    <div class="form-group">
+                        <label class="form-label">🏛️ 府邸工位 (必选)</label>
+                        <div class="address-options">
+                            <input type="radio" name="addr" id="addr_502" class="address-option" value="502">
+                            <label for="addr_502" class="address-label">502</label>
+
+                            <input type="radio" name="addr" id="addr_503" class="address-option" value="503">
+                            <label for="addr_503" class="address-label">503</label>
+
+                            <input type="radio" name="addr" id="addr_801" class="address-option" value="801">
+                            <label for="addr_801" class="address-label">801</label>
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">👤 姓名(必填)</label>
+                        <input type="text" id="customerName" class="form-input" placeholder="阁下尊姓大名">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">✍️ 嘱托</label>
+                        <textarea id="remark" class="form-textarea" placeholder="阁下可在此写下特殊嘱咐"></textarea>
+                    </div>
+                </section>
+
+                <div id="cartSummary" style="display: none;">
+                    <h2 class="section-title">选购名录</h2>
+                    <section class="tang-paper-card">
+                        <div id="cartItems"></div>
+                        <div class="cart-total">
+                            <span>合计</span>
+                            <span id="cartTotalPrice" class="total-price">¥0.00</span>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成功页面 -->
+    <div id="successPage" class="container success-page">
+        <div class="success-icon">📜</div>
+        <h2 style="color: var(--tang-gold); font-size: 2rem;">订单已呈递</h2>
+        <div class="order-no-box">
+            <p style="color: var(--tang-gold-light);">订单号</p>
+            <h3 id="orderNo" style="font-size: 1.5rem; letter-spacing: 2px;"></h3>
+        </div>
+        <p style="margin-bottom: 30px;">我们将竭诚为您制作，并尽快送往您的工位。</p>
+        <button class="submit-btn" onclick="resetOrder()">再备一单</button>
+    </div>
+
+    <!-- 底部确认 -->
+    <div id="bottomBar" class="bottom-bar">
+        <div class="bottom-bar-content">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div class="cart-icon-wrap" id="cartIconWrap" onclick="toggleCheckoutPanel()">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+                </div>
+                <div>
+                    <span style="font-size: 0.9rem; color: var(--text-muted);">已选 <span id="totalCount"
+                            style="color: var(--tang-gold);">0</span> 件</span>
+                    <div id="totalPrice" style="font-size: 1.5rem; color: var(--tang-gold); font-weight: 800;">¥0.00
+                    </div>
+                </div>
+            </div>
+            <button id="submitBtn" class="submit-btn" onclick="handleOrderSubmit()" disabled>
+                确认呈递
+            </button>
+        </div>
+    </div>
+
+    <!-- 规则卷轴弹窗 -->
+    <div id="rulesOverlay" class="checkout-panel-overlay" onclick="closeRules()"></div>
+    <div id="rulesModal" class="scroll-modal">
+        <div class="scroll-close" onclick="closeRules()">×</div>
+        <div class="scroll-header">
+            <h2>🏮 幸运捉影规矩</h2>
+        </div>
+        <div class="scroll-content">
+            <p>每在<b>6、11、12号</b>摊位消费满<b>10元</b>，即可获得一次“捉影中状元”抽奖机会。</p>
+            <p style="margin-top:10px"><b>【筹谋之法】</b></p>
+            <ol style="padding-left: 20px;">
+                <li>参与者先抽选并宣读一张扑克牌（如：红桃 8）。</li>
+                <li>工作人员将五十四张叶子戏（含大小王）洗匀。</li>
+                <li>参与者随机抽取一张，对照宣号判定赏赐。</li>
+            </ol>
+
+            <table class="rules-table">
+                <thead>
+                    <tr>
+                        <th>中奖类型</th>
+                        <th>概率</th>
+                        <th>赏赐内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>大王</b></td>
+                        <td>1.85%</td>
+                        <td>银票*4 (一组)</td>
+                    </tr>
+                    <tr>
+                        <td><b>小王</b></td>
+                        <td>1.85%</td>
+                        <td>银票*4 (一组)</td>
+                    </tr>
+                    <tr>
+                        <td><b>花色+数字相同</b></td>
+                        <td>1.85%</td>
+                        <td>银票*4 (一组)</td>
+                    </tr>
+                    <tr>
+                        <td><b>数字相同</b></td>
+                        <td>5.56%</td>
+                        <td>银票*2 (随机)</td>
+                    </tr>
+                    <tr>
+                        <td><b>花色相同</b></td>
+                        <td>22.22%</td>
+                        <td>银票*1 (随机)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>※ 综合中奖率高达 <b>33.33%</b>，祝阁下旗开得胜！</p>
+        </div>
+        <div class="scroll-footer">
+            凡所有相，皆是虚妄；落子无悔，尽兴方休。
+        </div>
+    </div>
+
+    <!-- 怀旧零食卷轴弹窗（单图居中版，新增） -->
+    <div id="snackOverlay" class="checkout-panel-overlay" onclick="closeSnack()"></div>
+    <div id="snackModal" class="scroll-modal">
+        <div class="scroll-close" onclick="closeSnack()">×</div>
+        <div class="scroll-header">
+            <h2>🍬 怀旧童年零食</h2>
+        </div>
+        <div class="scroll-content" style="text-align: center; padding: 10px 0;">
+            <p style="margin-bottom: 20px; font-weight: bold; line-height: 1.6;">
+                消费满10元随机抽取一款怀旧小零食<br>童年味道，幸运掉落～
+            </p>
+            <!-- 核心单张零食图：替换src为你的实际图片地址即可 -->
+            <img src="img/snack.png" alt="怀旧童年小零食" class="snack-single-img">
+            <p style="margin-top: 20px; color:#A61C00; font-weight: bold;">每消费满10元参与1次，幸运随机抽</p>
+        </div>
+        <div class="scroll-footer">
+            凡消费满10元，即可参与抽取，唐装小姐姐随餐送达
+        </div>
+    </div>
+
+    <!-- 浮动结算面板 -->
+    <div id="checkoutPanelOverlay" class="checkout-panel-overlay" onclick="closeCheckoutPanel()"></div>
+    <div id="checkoutPanel" class="checkout-panel">
+        <div class="checkout-panel-header">
+            <span class="checkout-panel-title">📜 御单签押</span>
+            <button class="checkout-panel-close" onclick="closeCheckoutPanel()">×</button>
+        </div>
+
+        <!-- 配送信息 -->
+        <div class="form-group">
+            <label class="form-label">🏛️ 府邸工位 (必选)</label>
+            <div class="address-options" id="panelAddressOptions">
+                <input type="radio" name="panelAddr" id="panel_addr_502" class="address-option" value="502">
+                <label for="panel_addr_502" class="address-label">502</label>
+
+                <input type="radio" name="panelAddr" id="panel_addr_503" class="address-option" value="503">
+                <label for="panel_addr_503" class="address-label">503</label>
+
+                <input type="radio" name="panelAddr" id="panel_addr_801" class="address-option" value="801">
+                <label for="panel_addr_801" class="address-label">801</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">👤 姓名</label>
+            <input type="text" id="panelCustomerName" class="form-input" placeholder="阁下尊姓大名">
+        </div>
+        <div class="form-group">
+            <label class="form-label">✍️ 嘱托</label>
+            <textarea id="panelRemark" class="form-textarea" placeholder="阁下可在此写下特殊嘱咐"></textarea>
+        </div>
+
+        <!-- 选购名录 -->
+        <div id="panelCartSummary" style="margin-top: 20px;">
+            <h3
+                style="color: var(--tang-gold); margin-bottom: 15px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 10px;">
+                🧧 选购名录</h3>
+            <div id="panelCartItems"></div>
+            <div class="cart-total">
+                <span>合计</span>
+                <span id="panelCartTotalPrice" class="total-price">¥0.00</span>
+            </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <button id="panelSubmitBtn" class="submit-btn" style="width: 100%; margin-top: 20px;"
+            onclick="submitOrderFromPanel()">
+            确认呈递
+        </button>
+    </div>
+
+    <!-- 图片预览遮罩 -->
+    <div id="imagePreviewOverlay" class="image-preview-overlay" onclick="closePreview()">
+        <div class="image-preview-content" onclick="event.stopPropagation()">
+            <div class="preview-close" onclick="closePreview()">×</div>
+            <img id="previewImg" class="preview-image" src="" alt="预览">
+            <div id="previewName" class="preview-name"></div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        var shopsData = [];
+        var currentShopId = null;
+        var cart = {}; // { productId: quantity }
+        var isSubmitting = false;
+        var lastClickTime = 0;
+        var CLICK_INTERVAL = 1500;
+        var API_BASE = '';
+
+        document.addEventListener('DOMContentLoaded', function () {
+            loadShops();
+            initRecentOrders();
+        });
+
+        // 加载店铺及其商品
+        function loadShops() {
+            fetch(API_BASE + '/order/shops')
+                .then(function (response) { return response.json(); })
+                .then(function (result) {
+                    if (result.retCode === 'SUCCESS' && result.data && result.data.length > 0) {
+                        shopsData = result.data;
+                        renderShopTabs();
+                        switchShop(shopsData[0].id);
+                    } else {
+                        showEmptyState(result.message || '暂无商品');
+                    }
+                })
+                .catch(function (error) {
+                    showEmptyState('网络异常，请刷新');
+                });
+        }
+
+        // 渲染店铺切换标签
+        function renderShopTabs() {
+            var tabsContainer = document.getElementById('shopTabs');
+            var html = '';
+            for (var i = 0; i < shopsData.length; i++) {
+                var shop = shopsData[i];
+                html += '<div class="shop-tab" id="tab-' + shop.id + '" onclick="switchShop(\'' + shop.id + '\')">' + escapeHtml(shop.name) + '</div>';
+            }
+            tabsContainer.innerHTML = html;
+        }
+
+        // 切换店铺
+        function switchShop(shopId) {
+            currentShopId = shopId;
+
+            // 更新 Tab 样式
+            var tabs = document.getElementsByClassName('shop-tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            document.getElementById('tab-' + shopId).classList.add('active');
+
+            // 更新标题、头像和背景
+            var shop = shopsData.find(function (s) { return s.id === shopId; });
+            document.getElementById('shopTitle').textContent = shop.name + ' · 珍馐';
+            document.getElementById('headerTitle').textContent = shop.name;
+
+            if (shop.avatarUrl) {
+                document.getElementById('shopAvatar').style.backgroundImage = 'url(' + shop.avatarUrl + ')';
+            }
+
+            if (shop.backgroundUrl) {
+                document.body.style.backgroundImage = 'url(' + shop.backgroundUrl + ')';
+            }
+
+            renderProducts();
+        }
+
+        // 渲染当前店铺商品列表
+        function renderProducts() {
+            var container = document.getElementById('productList');
+            var shop = shopsData.find(function (s) { return s.id === currentShopId; });
+
+            if (!shop || !shop.products || shop.products.length === 0) {
+                showEmptyState('该店铺暂无商品');
+                return;
+            }
+
+            var html = '';
+            for (var i = 0; i < shop.products.length; i++) {
+                var product = shop.products[i];
+                var qty = cart[product.id] || 0;
+                var selectedClass = qty > 0 ? ' selected' : '';
+                var disabledAttr = qty === 0 ? ' disabled' : '';
+
+                html += '<div class="product-card' + selectedClass + '" id="product-' + product.id + '">';
+                html += '<img src="' + (product.imageUrl || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjMmEyYTRhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGR5PSIuM2VtIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjNjY2IiBmb250LXNpemU9IjEyIj7llYblk4E8L3RleHQ+PC9zdmc+') + '" class="product-image" style="cursor: pointer;" onclick="previewImage(\'' + (product.imageUrl || '') + '\', \'' + escapeHtml(product.name) + '\')">';
+                html += '<div class="product-info">';
+                html += '<div><h3 class="product-name">' + escapeHtml(product.name) + '</h3>';
+                html += '<p class="product-desc">' + escapeHtml(product.description || '') + '</p></div>';
+                html += '<div class="product-bottom">';
+                html += '<span class="product-price">¥' + product.price.toFixed(2) + '</span>';
+                html += '<div class="quantity-control">';
+                html += '<button class="qty-btn" onclick="updateQuantity(\'' + product.id + '\', -1)"' + disabledAttr + '>−</button>';
+                html += '<span class="qty-value">' + qty + '</span>';
+                html += '<button class="qty-btn" onclick="updateQuantity(\'' + product.id + '\', 1, event)">+</button>';
+                html += '</div></div></div></div>';
+            }
+            container.innerHTML = html;
+        }
+
+        function showEmptyState(message) {
+            document.getElementById('productList').innerHTML = '<div style="padding: 40px; text-align: center; color: var(--tang-gold);">' + escapeHtml(message) + '</div>';
+        }
+
+        // 更新数量（全局购物车）- 带飞入动画
+        function updateQuantity(productId, delta, event) {
+            var currentQty = cart[productId] || 0;
+            var newQty = Math.max(0, Math.min(99, currentQty + delta));
+
+            if (newQty === 0) delete cart[productId];
+            else cart[productId] = newQty;
+
+            // 添加时触发飞入动画
+            if (delta > 0 && event) {
+                triggerFlyAnimation(event);
+            }
+
+            renderProducts();
+            updateCartSummary();
+        }
+
+        // ---------------- 最近下单轮播逻辑 ----------------
+        var recentOrders = [];
+        var carouselIndex = 0;
+        var carouselTimer = null;
+
+        var hasInitRecentOrders = false;
+        function initRecentOrders() {
+            fetchRecentOrders();
+            if (!hasInitRecentOrders) {
+                // 每5分钟刷新一次数据
+                setInterval(fetchRecentOrders, 300000);
+                hasInitRecentOrders = true;
+            }
+        }
+
+        function fetchRecentOrders() {
+            fetch(API_BASE + '/order/recent')
+                .then(function (res) { return res.json(); })
+                .then(function (result) {
+                    console.log('最近订单数据:', result);
+                    if (result.retCode === 'SUCCESS' && result.data) {
+                        recentOrders = result.data;
+                        if (recentOrders.length === 0) {
+                            // 无数据时显示默认欢迎语
+                            recentOrders = [{
+                                customerName: '坊主',
+                                products: ['招牌上等珍馐'],
+                                timeAgo: '刚刚'
+                            }];
+                        }
+                        renderCarousel();
+                        startCarousel();
+                    } else {
+                        console.warn('获取最近订单失败:', result.message);
+                        document.getElementById('orderCarousel').style.display = 'none';
+                    }
+                })
+                .catch(function () {
+                    console.error('获取最近订单失败');
+                });
+        }
+
+        function renderCarousel() {
+            var track = document.getElementById('carouselTrack');
+            var carousel = document.getElementById('orderCarousel');
+            var html = '';
+
+            recentOrders.forEach(function (order) {
+                var products = order.products.join('、');
+                if (products.length > 25) products = products.substring(0, 22) + '...';
+
+                html += '<div class="carousel-item">' +
+                    '<span class="carousel-tag">最新</span>' +
+                    '<span>食客 <b>' + escapeHtml(order.customerName) + '</b> 刚刚呈递了 ' + escapeHtml(products) + '</span>' +
+                    '<span style="margin-left:auto; opacity:0.6; font-size:0.75rem;">' + order.timeAgo + '</span>' +
+                    '</div>';
+            });
+
+            // 如果只有一条，不展示轮播动画
+            if (recentOrders.length > 0) {
+                carousel.style.display = 'flex';
+                // 复制首项到末尾实现无缝循环 (如果是纵向的话)
+                if (recentOrders.length > 1) {
+                    var firstOrder = recentOrders[0];
+                    var firstProducts = firstOrder.products.join('、');
+                    if (firstProducts.length > 25) firstProducts = firstProducts.substring(0, 22) + '...';
+                    html += '<div class="carousel-item">' +
+                        '<span class="carousel-tag">最新</span>' +
+                        '<span>食客 <b>' + escapeHtml(firstOrder.customerName) + '</b> 刚刚呈递了 ' + escapeHtml(firstProducts) + '</span>' +
+                        '<span style="margin-left:auto; opacity:0.6; font-size:0.75rem;">' + firstOrder.timeAgo + '</span>' +
+                        '</div>';
+                }
+            }
+
+            track.innerHTML = html;
+        }
+
+        function startCarousel() {
+            if (carouselTimer) clearInterval(carouselTimer);
+            if (recentOrders.length <= 1) return;
+
+            carouselIndex = 0;
+            var track = document.getElementById('carouselTrack');
+            track.style.transform = 'translateY(0)';
+
+            carouselTimer = setInterval(function () {
+                carouselIndex++;
+                track.style.transition = 'transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                track.style.transform = 'translateY(-' + (carouselIndex * 44) + 'px)';
+
+                if (carouselIndex >= recentOrders.length) {
+                    setTimeout(function () {
+                        track.style.transition = 'none';
+                        carouselIndex = 0;
+                        track.style.transform = 'translateY(0)';
+                    }, 600);
+                }
+            }, 4000);
+        }
+        // ------------------------------------------------
+
+        // 飞入购物车动画
+        function triggerFlyAnimation(event) {
+            var btn = event.target || event.srcElement;
+            var btnRect = btn.getBoundingClientRect();
+            var cartIcon = document.getElementById('cartIconWrap');
+            var cartRect = cartIcon.getBoundingClientRect();
+
+            // 创建飞行元素
+            var flyEl = document.createElement('div');
+            flyEl.className = 'fly-item';
+            flyEl.textContent = '🧧';
+            flyEl.style.left = btnRect.left + 'px';
+            flyEl.style.top = btnRect.top + 'px';
+
+            // 计算终点位置
+            var deltaX = cartRect.left - btnRect.left + cartRect.width / 2 - 25;
+            var deltaY = cartRect.top - btnRect.top + cartRect.height / 2 - 25;
+
+            // 设置CSS变量用于动画终点
+            flyEl.style.setProperty('--fly-x', deltaX + 'px');
+            flyEl.style.setProperty('--fly-y', deltaY + 'px');
+
+            document.body.appendChild(flyEl);
+
+            // 动画结束后移除元素并触发购物车图标弹跳
+            setTimeout(function () {
+                flyEl.remove();
+                cartIcon.classList.add('cart-bounce');
+                setTimeout(function () {
+                    cartIcon.classList.remove('cart-bounce');
+                }, 400);
+            }, 600);
+        }
+
+        // 统一购物车明细
+        function updateCartSummary() {
+            var itemsEl = document.getElementById('cartItems');
+            var cartSummary = document.getElementById('cartSummary');
+            var panelCartItems = document.getElementById('panelCartItems');
+            var cartBadge = document.getElementById('cartBadge');
+            var selectedIds = Object.keys(cart).filter(function (id) { return cart[id] > 0; });
+
+            if (selectedIds.length === 0) {
+                cartSummary.style.display = 'none';
+                document.getElementById('submitBtn').disabled = true;
+                document.getElementById('totalCount').textContent = '0';
+                document.getElementById('totalPrice').textContent = '¥0.00';
+                cartBadge.style.display = 'none';
+                if (panelCartItems) panelCartItems.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding: 20px;">暂无商品</div>';
+                return;
+            }
+
+            cartSummary.style.display = 'block';
+            var totalCount = 0, totalPrice = 0, html = '';
+
+            // 获取所有商品池以便查询
+            var allProducts = [];
+            shopsData.forEach(function (shop) {
+                allProducts = allProducts.concat(shop.products);
+            });
+
+            for (var i = 0; i < selectedIds.length; i++) {
+                var id = selectedIds[i];
+                var p = allProducts.find(function (item) { return item.id === id; });
+                if (!p) continue;
+
+                var qty = cart[id];
+                totalCount += qty; totalPrice += p.price * qty;
+                html += '<div class="cart-item">' +
+                    '<div class="cart-item-info">' +
+                    '<button class="cart-item-remove" onclick="removeItemFromCart(\'' + id + '\')" title="移除">✕</button>' +
+                    '<span>' + escapeHtml(p.name) + ' × ' + qty + '</span>' +
+                    '</div>' +
+                    '<span>¥' + (p.price * qty).toFixed(2) + '</span></div>';
+            }
+
+            itemsEl.innerHTML = html;
+            if (panelCartItems) panelCartItems.innerHTML = html;
+
+            document.getElementById('totalCount').textContent = totalCount;
+            document.getElementById('totalPrice').textContent = '¥' + totalPrice.toFixed(2);
+            document.getElementById('cartTotalPrice').textContent = '¥' + totalPrice.toFixed(2);
+            var panelTotal = document.getElementById('panelCartTotalPrice');
+            if (panelTotal) panelTotal.textContent = '¥' + totalPrice.toFixed(2);
+
+            document.getElementById('submitBtn').disabled = false;
+
+            // 更新购物车角标
+            cartBadge.textContent = totalCount > 99 ? '99+' : totalCount;
+            cartBadge.style.display = 'flex';
+        }
+
+        function submitOrder() {
+            var now = Date.now();
+            if (now - lastClickTime < CLICK_INTERVAL) { showToast('🏮 且慢，请勿催促'); return; }
+            lastClickTime = now;
+            if (isSubmitting) return;
+
+            var addrEl = document.querySelector('input[name="addr"]:checked');
+            var addr = addrEl ? addrEl.value : '';
+            if (!addr) { showToast('🏮 请点选您的府邸工位'); return; }
+
+            var selectedIds = Object.keys(cart).filter(function (id) { return cart[id] > 0; });
+            var orderRequest = {
+                workstationAddress: addr,
+                customerName: document.getElementById('customerName').value.trim() || null,
+                remark: document.getElementById('remark').value.trim() || null,
+                items: selectedIds.map(function (id) { return { productId: id, quantity: cart[id] }; })
+            };
+
+            isSubmitting = true;
+            var btn = document.getElementById('submitBtn');
+            btn.classList.add('loading'); btn.textContent = '传递中...';
+
+            fetch(API_BASE + '/order/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderRequest)
+            })
+                .then(function (res) { return res.json(); })
+                .then(function (result) {
+                    if (result.retCode === 'SUCCESS') showSuccessPage(result.data);
+                    else showToast('🏮 ' + (result.message || '传递失败'));
+                })
+                .catch(function () { showToast('🏮 网络故障，待会再试'); })
+                .finally(function () {
+                    isSubmitting = false; btn.classList.remove('loading'); btn.textContent = '确认呈递';
+                });
+        }
+
+        function showSuccessPage(orderNo) {
+            document.getElementById('mainPage').style.display = 'none';
+            document.getElementById('bottomBar').style.display = 'none';
+            document.getElementById('successPage').style.display = 'block';
+            document.getElementById('orderNo').textContent = orderNo;
+            initRecentOrders();
+            window.scrollTo(0, 0);
+        }
+
+        function resetOrder() {
+            cart = {};
+            // 清除PC端表单
+            var addrRadios = document.getElementsByName('addr');
+            for (var i = 0; i < addrRadios.length; i++) addrRadios[i].checked = false;
+            document.getElementById('customerName').value = '';
+            document.getElementById('remark').value = '';
+            // 清除面板表单
+            var panelAddrRadios = document.getElementsByName('panelAddr');
+            for (var i = 0; i < panelAddrRadios.length; i++) panelAddrRadios[i].checked = false;
+            document.getElementById('panelCustomerName').value = '';
+            document.getElementById('panelRemark').value = '';
+            // 恢复页面状态
+            document.getElementById('mainPage').style.display = 'block';
+            document.getElementById('bottomBar').style.display = 'block';
+            document.getElementById('successPage').style.display = 'none';
+            renderProducts(); updateCartSummary();
+            window.scrollTo(0, 0);
+        }
+
+        var toastTimeout = null;
+        function showToast(msg) {
+            var el = document.getElementById('toast');
+            var overlay = document.getElementById('toastOverlay');
+
+            if (toastTimeout) clearTimeout(toastTimeout);
+
+            el.innerHTML = '<div class="toast-close" onclick="hideToast()">×</div>' +
+                '<div style="margin-bottom:10px">' + msg.replace(/\n/g, '<br>') + '</div>' +
+                '<div style="font-size:0.8rem; color:var(--text-muted); margin-top:15px; border-top:1px solid rgba(212,175,55,0.2); padding-top:10px;">点击空白处或等待关闭</div>';
+
+            overlay.style.display = 'block';
+            el.style.display = 'block';
+
+            // 强制重绘
+            overlay.offsetWidth;
+
+            el.className = 'toast show';
+            overlay.className = 'show';
+
+            // 根据消息长度计算显示时间，至少4秒，最长10秒
+            var duration = Math.min(Math.max(4000, msg.length * 150), 10000);
+            toastTimeout = setTimeout(hideToast, duration);
+
+            // 点击遮罩立即关闭
+            overlay.onclick = hideToast;
+        }
+
+        function hideToast() {
+            var el = document.getElementById('toast');
+            var overlay = document.getElementById('toastOverlay');
+
+            if (toastTimeout) {
+                clearTimeout(toastTimeout);
+                toastTimeout = null;
+            }
+
+            el.classList.remove('show');
+            overlay.classList.remove('show');
+
+            // 等待动画结束后彻底隐藏
+            setTimeout(function () {
+                if (!el.classList.contains('show')) {
+                    el.style.display = 'none';
+                    overlay.style.display = 'none';
+                }
+            }, 400);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            var div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 从购物车中移除商品
+        function removeItemFromCart(productId) {
+            if (cart[productId]) {
+                delete cart[productId];
+                renderProducts();
+                updateCartSummary();
+            }
+        }
+
+        // 图片预览
+        function previewImage(url, name) {
+            if (!url) return;
+            var overlay = document.getElementById('imagePreviewOverlay');
+            var img = document.getElementById('previewImg');
+            var nameEl = document.getElementById('previewName');
+
+            img.src = url;
+            nameEl.textContent = name;
+            overlay.style.display = 'flex';
+            setTimeout(function () {
+                overlay.classList.add('show');
+            }, 10);
+
+            // 阻止背景滚动
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePreview() {
+            var overlay = document.getElementById('imagePreviewOverlay');
+            overlay.classList.remove('show');
+            setTimeout(function () {
+                overlay.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        // 规则弹窗控制
+        function openRules() {
+            var modal = document.getElementById('rulesModal');
+            var overlay = document.getElementById('rulesOverlay');
+            overlay.classList.add('show');
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeRules() {
+            var modal = document.getElementById('rulesModal');
+            var overlay = document.getElementById('rulesOverlay');
+            modal.classList.remove('show');
+            overlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        // 结算面板控制
+        function openCheckoutPanel() {
+            syncDataToPanel();
+            var panel = document.getElementById('checkoutPanel');
+            var overlay = document.getElementById('checkoutPanelOverlay');
+            panel.classList.add('show');
+            overlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 数据同步：将侧边栏数据同步到面板
+        function syncDataToPanel() {
+            // 同步工位
+            var addrEl = document.querySelector('input[name="addr"]:checked');
+            if (addrEl) {
+                var panelAddrEl = document.getElementById('panel_addr_' + addrEl.value);
+                if (panelAddrEl) panelAddrEl.checked = true;
+            }
+            // 同步姓名和备注
+            document.getElementById('panelCustomerName').value = document.getElementById('customerName').value;
+            document.getElementById('panelRemark').value = document.getElementById('remark').value;
+        }
+
+        // 处理下单逻辑（判断入口）
+        function handleOrderSubmit() {
+            var isDesktop = window.innerWidth > 900;
+
+            // 网页端：侧边栏可见，先校验必填项，通过后进入“面板确认页”
+            if (isDesktop) {
+                var addrEl = document.querySelector('input[name="addr"]:checked');
+                var name = document.getElementById('customerName').value.trim();
+
+                if (!addrEl) {
+                    showToast('🏮 请点选您的府邸工位');
+                    var rightCol = document.querySelector('.content-right');
+                    if (rightCol) rightCol.scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+                if (!name) {
+                    showToast('🏮 呈递御旨怎能不留下姓名？\n请在右方填写您的尊姓大名');
+                    document.getElementById('customerName').focus();
+                    return;
+                }
+            }
+
+            // 1. 网页端：作为“确认页”打开
+            // 2. 移动端：侧边栏隐藏，直接打开面板进行“信息填写”
+            openCheckoutPanel();
+        }
+
+        function closeCheckoutPanel() {
+            var panel = document.getElementById('checkoutPanel');
+            var overlay = document.getElementById('checkoutPanelOverlay');
+            panel.classList.remove('show');
+            overlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function toggleCheckoutPanel() {
+            var panel = document.getElementById('checkoutPanel');
+            if (panel.classList.contains('show')) {
+                closeCheckoutPanel();
+            } else {
+                openCheckoutPanel();
+            }
+        }
+
+        // 从面板提交订单
+        function submitOrderFromPanel() {
+            var now = Date.now();
+            if (now - lastClickTime < CLICK_INTERVAL) { showToast('🏮 且慢，请勿催促'); return; }
+            lastClickTime = now;
+            if (isSubmitting) return;
+
+            var addrEl = document.querySelector('input[name="panelAddr"]:checked');
+            var addr = addrEl ? addrEl.value : '';
+            if (!addr) { showToast('🏮 请点选您的府邸工位'); return; }
+
+            var selectedIds = Object.keys(cart).filter(function (id) { return cart[id] > 0; });
+            if (selectedIds.length === 0) { showToast('🏮 请先选择珍馐'); return; }
+
+            var orderRequest = {
+                workstationAddress: addr,
+                customerName: document.getElementById('panelCustomerName').value.trim() || null,
+                remark: document.getElementById('panelRemark').value.trim() || null,
+                items: selectedIds.map(function (id) { return { productId: id, quantity: cart[id] }; })
+            };
+
+            isSubmitting = true;
+            var btn = document.getElementById('panelSubmitBtn');
+            btn.classList.add('loading'); btn.textContent = '传递中...';
+
+            fetch(API_BASE + '/order/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderRequest)
+            })
+                .then(function (res) { return res.json(); })
+                .then(function (result) {
+                    if (result.retCode === 'SUCCESS') {
+                        closeCheckoutPanel();
+                        showSuccessPage(result.data);
+                    }
+                    else showToast('🏮 ' + (result.message || '传递失败'));
+                })
+                .catch(function () { showToast('🏮 网络故障，待会再试'); })
+                .finally(function () {
+                    isSubmitting = false; btn.classList.remove('loading'); btn.textContent = '确认呈递';
+                });
+        }
+
+        // 怀旧零食弹层控制（新增，和幸运捉影逻辑一致）
+        function openSnack() {
+            var modal = document.getElementById('snackModal');
+            var overlay = document.getElementById('snackOverlay');
+            modal.style.display = 'block';
+            overlay.classList.add('show');
+            setTimeout(function () {
+                modal.classList.add('show');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+        function closeSnack() {
+            var modal = document.getElementById('snackModal');
+            var overlay = document.getElementById('snackOverlay');
+            modal.classList.remove('show');
+            overlay.classList.remove('show');
+            setTimeout(function () {
+                modal.style.display = 'none';
+            }, 500);
+            document.body.style.overflow = '';
+        }
+        
+    </script>
+</body>
+
+</html>

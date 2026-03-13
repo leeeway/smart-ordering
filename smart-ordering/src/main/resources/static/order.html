@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="光宇游戏 - 摊主跑路啦">
+    <title>光宇美食摊 - 明年见！</title>
+    <style>
+        :root {
+            --tang-red: #A61C00;
+            --tang-red-dark: #730100;
+            --tang-gold: #D4AF37;
+            --tang-gold-light: #F2D57E;
+            --tang-black: #1A0909;
+            --tang-ink: #2F1B1B;
+            --tang-ivory: #F8F4E3;
+            --tang-paper: #FFF9EB;
+            --primary-gradient: linear-gradient(135deg, var(--tang-red) 0%, var(--tang-red-dark) 100%);
+            --gold-gradient: linear-gradient(135deg, var(--tang-gold) 0%, var(--tang-gold-light) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "STKaiti", serif;
+            background-color: var(--tang-black);
+            color: var(--tang-ivory);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-image: url('tang_bg.png');
+            background-size: 400px;
+            background-repeat: repeat;
+            background-attachment: fixed;
+            padding: 20px;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(26, 9, 9, 0.6) 0%, rgba(26, 9, 9, 0.98) 100%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        /* 搞怪公告板 */
+        .notice-board {
+            background: #fff;
+            color: #222;
+            padding: 40px 30px;
+            border: 8px solid var(--tang-red);
+            border-radius: 4px;
+            box-shadow:
+                    15px 15px 0px var(--tang-gold),
+                    30px 30px 0px rgba(0, 0, 0, 0.5);
+            position: relative;
+            transform: rotate(-2deg);
+            animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.3) rotate(20deg);
+                opacity: 0;
+            }
+
+            70% {
+                transform: scale(1.1) rotate(-5deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(-2deg);
+                opacity: 1;
+            }
+        }
+
+        .notice-header {
+            background: var(--tang-red);
+            color: white;
+            padding: 10px;
+            font-weight: 900;
+            font-size: 1.5rem;
+            margin: -40px -30px 30px -30px;
+            letter-spacing: 5px;
+        }
+
+        .funny-text {
+            font-size: 1.4rem;
+            font-weight: 800;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .highlight {
+            background: linear-gradient(transparent 60%, #FFEB3B 60%);
+            padding: 0 5px;
+        }
+
+        .emoji-float {
+            font-size: 3rem;
+            display: inline-block;
+            animation: shake 0.5s infinite;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(10deg);
+            }
+
+            75% {
+                transform: rotate(-10deg);
+            }
+        }
+
+        .chef-run {
+            width: 150px;
+            margin: 20px auto;
+            display: block;
+            filter: grayscale(0.2);
+            animation: slideLeft 2s linear infinite;
+        }
+
+        @keyframes slideLeft {
+            0% {
+                transform: translateX(20px);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: translateX(-20px);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(20px);
+                opacity: 0.8;
+            }
+        }
+
+        .signature {
+            margin-top: 30px;
+            border-top: 2px dashed #ccc;
+            padding-top: 20px;
+            font-family: "STKaiti", serif;
+            font-size: 1.2rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .seal {
+            width: 50px;
+            height: 50px;
+            background: var(--tang-red);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            transform: rotate(5deg);
+            border: 2px solid #730100;
+        }
+
+        .footer-action {
+            margin-top: 50px;
+            color: var(--tang-gold-light);
+            font-size: 1rem;
+            letter-spacing: 2px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        /* 搞怪装饰 */
+        .decor {
+            position: fixed;
+            pointer-events: none;
+            font-size: 2.5rem;
+            z-index: 0;
+        }
+
+        .decor-1 {
+            top: 10%;
+            left: 10%;
+        }
+
+        .decor-2 {
+            bottom: 15%;
+            right: 10%;
+        }
+
+        .decor-3 {
+            top: 20%;
+            right: 15%;
+        }
+
+        @media (max-width: 500px) {
+            .funny-text {
+                font-size: 1.1rem;
+            }
+
+            .notice-board {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="decor decor-1">🏃‍♂️</div>
+<div class="decor decor-2">🍲</div>
+<div class="decor decor-3">💨</div>
+
+<div class="container">
+    <div class="notice-board">
+        <div class="notice-header">老板跑路啦！</div>
+        <div class="emoji-float">📢</div>
+        <div class="funny-text">
+            <span class="highlight">别看了，饭都没了！</span><br>
+            主厨（秃头开发们）由于写代码太饿<br>
+            <span class="highlight">已经把摊位剩下的菜全吃光了...</span><br>
+            由于抢救头发和修复Bug任务繁重<br>
+            我们已集体跑路（下班）🏃💨
+        </div>
+
+        <div style="font-size: 1.8rem; font-weight: 900; color: var(--tang-red);">
+            明年再见！真的！
+        </div>
+
+        <div class="signature">
+            光宇游戏🏮开发部🏮美食摊成员
+            <div class="seal">下班<br>万岁</div>
+        </div>
+    </div>
+
+    <div class="footer-action">
+        🏮 只要Bug修得快，明年美食依然在 🏮
+    </div>
+</div>
+
+<script>
+    document.body.addEventListener('click', function () {
+        const colors = ['#A61C00', '#D4AF37', '#FFEB3B'];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        document.querySelector('.notice-board').style.borderColor = randomColor;
+    });
+</script>
+</body>
+
+</html>
