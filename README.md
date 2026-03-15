@@ -1,74 +1,98 @@
-# Smart Ordering (唐肆点膳)
+# Smart Ordering (唐肆点膳) 🏮
 
-## 项目简介
-**Smart Ordering (唐肆点膳)** 是一个面向内部短距离场景的点餐系统，适用于公司、工作室或小型团队内部使用。系统以唐朝风格商品与文化元素为特色，支持快速点餐、库存管理及订单处理。
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Java Version](https://img.shields.io/badge/Java-11-orange.svg)](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.6.6-green.svg)](https://spring.io/projects/spring-boot)
 
-## 主要功能
-- **商品订购系统**：在线浏览商品并下单。
-- **多店铺支持**：支持多个虚拟店铺配置。
-- **企业微信集成**：通过 WebHook 推送订单通知。
-- **订单管理**：提供订单处理与状态展示。
+**Smart Ordering (唐肆点膳)** 是一款专为公司、工作室或小型团队设计的内部点餐系统。它以独特的**盛唐文化**为视觉与文案主题，将日常点餐化作一场“坊间探店”之旅，既实用又富有情趣。
 
-## 技术栈
-- **Java 11**
-- **Spring Boot 2.6.6**
-- **MyBatis** & **SQL Server**
-- **Spring Cloud Kubernetes** (ConfigMap 动态配置)
-- **Lombok** & **Gson**
-- **Log4j2** (使用 Disruptor 提高异步日志性能)
+---
 
-## 项目结构
-```
-smart-ordering/
-├── src/main/java/com/example/order/
-│   ├── bean/order/          # 订单与商品实体类
-│   ├── config/              # 数据库、Gson、缓存等配置
-│   ├── controller/          # 订单控制层
-│   ├── dao/                 # MyBatis Mapper 接口
-│   ├── service/             # 业务逻辑层
-│   ├── util/                # 工具类 (IP, Base64, Cookie)
-│   └── SmartOrderingApplication.java # 启动类
-├── src/main/resources/
-│   ├── static/              # 静态网页资源 (lottery, order)
-│   ├── application.yaml     # 应用基础配置
-│   ├── bootstrap.yml        # Spring Cloud 引导配置
-│   └── log4j2.xml           # 日志详细配置
-├── sql/
-│   └── schema.sql           # 数据库初始化脚本
-└── pom.xml                  # Maven 依赖管理
-```
+## ✨ 核心特性
 
-## 快速开始
+- **🎭 沉浸式唐风体验**：从“锦鲤玉卷”到“凝霜琼酪”，全案采用唐朝风格命名的商品与店铺，支持高度自定义的 UI 视觉（头像、背景图）。
+- **🏬 多店铺模式**：支持配置多个虚拟店铺，如“御馔海焙坊”、“长安甜馥肆”等，满足不同餐饮类型的需求。
+- **💼 企业协同集成**：深度集成企业微信，订单通过 WebHook 实时推送至群聊，并支持 @所有人 提醒及订单自动拆单。
+- **📦 库存管理**：内置基础库存扣减机制，防止超卖。
+- **🕒 动态看板**：首页展示最近订单轮播，增强团队互动氛围。
+- **☁️ 云原生架构**：支持 Spring Cloud Kubernetes 动态配置（ConfigMap），轻松适配容器化部署。
 
-### 环境要求
-- JDK 11+
-- Maven 3.6+
-- SQL Server
+---
 
-### 安装与运行
+## 🛠️ 技术栈
 
-1. **配置数据库**
-   在 `src/main/resources/application.yaml` 中配置 SQL Server 连接信息，并执行 `sql/schema.sql` 初始化表结构。
+| 领域 | 技术 |
+| :--- | :--- |
+| **后端** | Java 11, Spring Boot 2.6.6, Spring Cloud Kubernetes, MyBatis |
+| **数据库** | SQL Server (Druid 连接池) |
+| **日志** | Log4j2 + Disruptor (高性能异步日志) |
+| **工具** | Lombok, Gson, OpenFeign, Actuator |
+| **静态资源** | HTML5, CSS3, JavaScript |
 
-2. **编译打包**
+---
+
+## 🚀 快速部署
+
+### 方式一：Docker Compose (推荐)
+
+最简单快捷的启动方式，包含应用与 SQL Server 数据库：
+
+1. **克隆仓库**
    ```bash
-   mvn clean package -DskipTests
+   git clone https://github.com/leeway/smart-ordering.git
+   cd smart-ordering/smart-ordering
    ```
 
-3. **运行应用**
+2. **启动容器**
    ```bash
+   docker-compose up -d
+   ```
+
+3. **访问系统**
+   - 首页：[http://localhost:8081/order.html](http://localhost:8081/order.html)
+   - 管理接口：[http://localhost:8081/actuator/health](http://localhost:8081/actuator/health)
+
+### 方式二：本地 Maven 运行
+
+1. **初始化数据库**
+   - 在 SQL Server 中创建数据库 `shop_db`。
+   - 执行 `sql/schema.sql` (注：脚本目前为 MySQL 语法，SQL Server 环境下请根据注释微调)。
+
+2. **修改配置**
+   在 `src/main/resources/application.yaml` 中配置连接信息。
+
+3. **编译并运行**
+   ```bash
+   mvn clean package -DskipTests
    java -jar target/smart-ordering-1.0-SNAPSHOT.jar
    ```
 
+---
 
-## 维护与开发
+## ⚙️ 配置说明
 
-### 代码规范
-- 使用 Lombok 简化 POJO。
-- 遵循标准的 MVC 三层架构。
-- 配置文件支持通过 Kubernetes ConfigMap 进行动态覆盖。
+系统主要通过 `application.yaml` 进行配置，关键项如下：
 
-## License
-[MIT License](LICENSE)
+- `order.enabled`: 订单功能总开关。
+- `order.webhook-url`: 企业微信 WebHook 地址。
+- `order.shops`: 店铺及商品列表，支持图片 URL 和动态价格。
+- `spring.datasource`: 数据库连接配置。
 
+---
 
+## 🤝 贡献指南
+
+我们欢迎任何形式的贡献，包括但不限于：
+- 提交 Bug 或新功能建议 (Issues)。
+- 改进代码或文档 (Pull Request)。
+- 创作更多有趣的唐风文案或静态资源。
+
+---
+
+## 📜 许可证
+
+本项目基于 **[MIT License](LICENSE)** 开源。
+
+---
+
+> **“锦书已达，珍馐将至。”** —— 祝您的团队用餐愉快！🍵
